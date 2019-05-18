@@ -10,8 +10,9 @@ def create_database():
     
     # create sparkify database with UTF8 encoding
     cur.execute("DROP DATABASE IF EXISTS sparkifydb")
+    print(cur.query.decode())
     cur.execute("CREATE DATABASE sparkifydb WITH ENCODING 'utf8' TEMPLATE template0")
-
+    print(cur.query.decode())
     # close connection to default database
     conn.close()    
     
@@ -25,12 +26,14 @@ def create_database():
 def drop_tables(cur, conn):
     for query in drop_table_queries:
         cur.execute(query)
+        print(cur.query.decode())
         conn.commit()
 
 
 def create_tables(cur, conn):
     for query in create_table_queries:
         cur.execute(query)
+        print(cur.query.decode())
         conn.commit()
 
 
