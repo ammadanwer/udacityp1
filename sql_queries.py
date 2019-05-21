@@ -10,9 +10,9 @@ time_table_drop = "DROP TABLE IF EXISTS public.time;"
 
 songplay_table_create = ("""
 CREATE TABLE public.songplays(
-songplay_id SERIAL,
-start_time TIMESTAMP,
-user_id VARCHAR,
+songplay_id SERIAL PRIMARY KEY,
+start_time TIMESTAMP NOT NULL,
+user_id VARCHAR NOT NULL,
 level VARCHAR,
 song_id VARCHAR,
 artist_id VARCHAR,
@@ -34,7 +34,7 @@ level VARCHAR
 
 song_table_create = ("""CREATE TABLE public.songs (
 song_id VARCHAR PRIMARY KEY,
-title VARCHAR,
+title VARCHAR NOT NULL,
 artist_id VARCHAR,
 year INT4,
 duration FLOAT8
@@ -44,7 +44,7 @@ duration FLOAT8
 artist_table_create = ("""
 CREATE TABLE public.artists (
 artist_id VARCHAR PRIMARY KEY,
-name VARCHAR,
+name VARCHAR NOT NULL,
 location VARCHAR,
 lattitude FLOAT8,
 longitude FLOAT8
@@ -73,8 +73,9 @@ VALUES (%s, %s, %s, %s, %s, %s, %s, %s);
 user_table_insert = ("""
 INSERT INTO public.users(user_id, first_name, last_name, gender, level)
 VALUES (%s, %s, %s, %s, %s)
-ON CONFLICT
-DO NOTHING;
+ON CONFLICT(user_id) 
+DO UPDATE 
+SET level = EXCLUDED.level
 """)
 
 song_table_insert = ("""

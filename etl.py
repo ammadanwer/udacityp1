@@ -9,6 +9,14 @@ from sql_queries import *
 
 
 def process_song_file(cur, filepath):
+    """
+        This function takes in the path of a songs file, loads the file and extracts songs information and artist information.
+        It then stores this information into the respective songs and artists table
+
+        INPUTS:
+        * cur the cursor variable of the database
+        * filepath the file path to the song file
+    """
     # open song file
     with open(filepath, 'r') as f:
         data = json.load(f)
@@ -26,6 +34,14 @@ def process_song_file(cur, filepath):
 
 
 def process_log_file(cur, filepath):
+    """
+        This function takes in the path of a log file, loads the file and extracts songplay log information and user information.
+        It then stores this information into the respective songplays and user table
+
+        INPUTS:
+        * cur the cursor variable of the database
+        * filepath the file path to the log file
+    """
     with open(filepath, 'r') as f:
         df = pd.read_json(f, lines=True)
 
@@ -56,7 +72,6 @@ def process_log_file(cur, filepath):
     for index, row in df.iterrows():
         # get songid and artistid from song and artist tables
         results = cur.execute(song_select, (row.song, row.artist, row.length))
-
         songid, artistid = results if results else None, None
 
         # insert songplay record
@@ -67,6 +82,18 @@ def process_log_file(cur, filepath):
 
 
 def process_data(cur, conn, filepath, func):
+    """
+        This function takes in the path of a root directory that contains the json files
+        and the function that processes each individual file.
+        First it extracts a list of all the json files in the given directory.
+        Then it iterates over that list and passes each file to the function that processes the file.
+
+        INPUTS:
+        * cur the cursor variable of the database
+        * conn the connection variable of the database
+        * filepath the path of the root directory to process
+        * func the function which processes each file
+    """
     # get all files matching extension from directory
     all_files = []
     for root, dirs, files in os.walk(filepath):
@@ -86,6 +113,10 @@ def process_data(cur, conn, filepath, func):
 
 
 def main():
+    """
+        This function is the entry point of our program.
+        It connects to the database, processes each directory containing the files and eventually closes the database connection.
+    """
     conn = psycopg2.connect("host=127.0.0.1 dbname=sparkifydb user=student password=student")
     cur = conn.cursor()
 
